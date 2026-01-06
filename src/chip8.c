@@ -9,7 +9,7 @@ static inline uint16_t
 chip8_fetch(const Chip8 *c8)
 {
 	const uint8_t hi = memory_read(&c8->mem, c8->pc);
-	const uint8_t lo = memory_read(&c8->mem, c8->pc + 1);
+	const uint8_t lo = memory_read(&c8->mem, (uint16_t)(c8->pc + 1u));
 	return (uint16_t)((hi << 8) | lo);
 }
 
