@@ -94,7 +94,7 @@ platform_init_debugger(const char *title, int x, int y, int w, int h)
 }
 
 void
-debugger_shutdown()
+debugger_shutdown(void)
 {
 #ifdef USE_SDL
 	if (debugger_reg_renderer) {

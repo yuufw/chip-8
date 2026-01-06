@@ -1,7 +1,16 @@
 #ifndef COLORS_H
 #define COLORS_H
 
+#if defined(__GNUC__) || defined(__clang__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wswitch-default"
+#endif
+
 #include <SDL2/SDL.h>
+
+#if defined(__GNUC__) || defined(__clang__)
+#pragma GCC diagnostic pop
+#endif
 
 #define ORANGE_AMBER_CRT   (SDL_Color) { 255, 183, 76, 255 }
 #define CRT_DARK_BG        (SDL_Color) { 20, 12, 4, 255 }

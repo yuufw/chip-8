@@ -32,6 +32,29 @@ platform_init_font(void)
 	return 0;
 }
 
+typedef struct {
+    SDL_Keycode sdl;
+    uint8_t chip8;
+} KeyMap;
+
+static const KeyMap keymap[] = {
+    { SDLK_1, 0x1 }, { SDLK_2, 0x2 }, { SDLK_3, 0x3 }, { SDLK_4, 0xC },
+    { SDLK_q, 0x4 }, { SDLK_w, 0x5 }, { SDLK_e, 0x6 }, { SDLK_r, 0xD },
+    { SDLK_a, 0x7 }, { SDLK_s, 0x8 }, { SDLK_d, 0x9 }, { SDLK_f, 0xE },
+    { SDLK_z, 0xA }, { SDLK_x, 0x0 }, { SDLK_c, 0xB }, { SDLK_v, 0xF },
+};
+
+static int
+map_key(SDL_Keycode sym)
+{
+    for (size_t i = 0; i < sizeof(keymap) / sizeof(keymap[0]); i++) {
+        if (keymap[i].sdl == sym) {
+            return keymap[i].chip8;
+        }
+    }
+    return -1;
+}
+
 void
 platform_handle_input(Input *in)
 {
@@ -50,70 +73,12 @@ platform_handle_input(Input *in)
 		case SDL_KEYDOWN:
 		case SDL_KEYUP: {
 			bool down = (ev.type == SDL_KEYDOWN);
-			int key = -1;
-
-			switch (ev.key.keysym.sym) {
-			case SDLK_1:
-				key = 0x1;
-				break;
-			case SDLK_2:
-				key = 0x2;
-				break;
-			case SDLK_3:
-				key = 0x3;
-				break;
-			case SDLK_4:
-				key = 0xC;
-				break;
-
-			case SDLK_q:
-				key = 0x4;
-				break;
-			case SDLK_w:
-				key = 0x5;
-				break;
-			case SDLK_e:
-				key = 0x6;
-				break;
-			case SDLK_r:
-				key = 0xD;
-				break;
-
-			case SDLK_a:
-				key = 0x7;
-				break;
-			case SDLK_s:
-				key = 0x8;
-				break;
-			case SDLK_d:
-				key = 0x9;
-				break;
-			case SDLK_f:
-				key = 0xE;
-				break;
-
-			case SDLK_z:
-				key = 0xA;
-				break;
-			case SDLK_x:
-				key = 0x0;
-				break;
-			case SDLK_c:
-				key = 0xB;
-				break;
-			case SDLK_v:
-				key = 0xF;
-				break;
-
-			case SDLK_ESCAPE:
-				in->exit_signal = 1;
-				break;
-			default:
-				break;
-			}
+			int key = map_key(ev.key.keysym.sym);
 
 			if (key >= 0) {
 				input_set_key(in, (uint8_t)key, down);
+			} else if (ev.key.keysym.sym == SDLK_ESCAPE) {
+				in->exit_signal = 1;
 			}
 		} break;
 

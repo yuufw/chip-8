@@ -55,6 +55,19 @@ ifeq ($(strip $(SDL_PKG_LIBS)),)
   SDL_PKG_LIBS   := -lSDL2 -lSDL2_ttf
 endif
 
+# ---------- macOS Homebrew SDL fallback ----------
+ifeq ($(shell uname),Darwin)
+  ifeq ($(strip $(SDL_PKG_CFLAGS)),)
+    BREW_PREFIX := $(shell brew --prefix 2>/dev/null)
+    ifneq ($(BREW_PREFIX),)
+      SDL_PKG_CFLAGS := -I$(BREW_PREFIX)/include -I$(BREW_PREFIX)/include/SDL2
+      SDL_PKG_LIBS   := -L$(BREW_PREFIX)/lib -lSDL2 -lSDL2_ttf
+    endif
+  endif
+endif
+
+
+
 # ---------- Common flags (embedded in ALL targets) ----------
 WERROR ?= 1
 

@@ -46,7 +46,7 @@ This implementation follows the [Cowgod's Chip-8 Technical Reference v1.0](http:
 To run a CHIP-8 program, use the following command:
 
 ```bash
-./chip8 path/to/your/program.ch8
+./bin/chip8 path/to/your/program.ch8
 ```
 
 Replace `path/to/your/program.ch8` with the actual path to your CHIP-8 program file.
@@ -65,5 +65,5 @@ Original CHIP-8 Keypad       Mapped Keyboard Keys
 | 7 | 8 | 9 | E |            | A | S | D | F |
 +---+---+---+---+            +---+---+---+---+
 | A | 0 | B | F |            | Z | X | C | V |
-+---+---+---+---+            +---+---+---+---+  
++---+---+---+---+            +---+---+---+---+
 ```
