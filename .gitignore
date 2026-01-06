@@ -59,4 +59,8 @@ dkms.conf
 *.ch8
 chip8
 
+# Build outputs
+/bin/
+/obj/
+
 # End of https://www.toptal.com/developers/gitignore/api/c
