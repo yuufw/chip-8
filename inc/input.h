@@ -9,6 +9,7 @@
 typedef struct __attribute__((packed)) {
 	uint8_t keys[NUM_KEYS];
 	int8_t waiting_for_key;
+	bool menu_signal;
 	bool exit_signal;
 } Input;
 
