@@ -19,7 +19,6 @@ typedef struct {
 	char path[ROM_PATH_MAX];
 } MenuSelection;
 
-int menu_select_rom(const rom_t *roms, size_t rom_count,
-                    MenuSelection *out);
+int menu_select_rom(const rom_t *roms, size_t rom_count, MenuSelection *out);
 
 #endif    // MENU_H

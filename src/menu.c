@@ -13,29 +13,29 @@
 #define MENU_ARRAY_LEN(a) (sizeof(a) / sizeof((a)[0]))
 
 typedef enum Menu {
-	MENU_TOP 		= 20u,
-	MENU_TITLE_GAP 		= 30u,
-	MENU_HELP_GAP 		= 30u,
-	MENU_LINE_HEIGHT 	= 20u,
-	MENU_LIST_GAP 		= 10u,
-	MENU_INPUT_LABEL_GAP 	= 20u,
-	MENU_INPUT_BOX_HEIGHT 	= 20u,
-	MENU_HIGHLIGHT_WIDTH 	= 320u
+	MENU_TOP = 20u,
+	MENU_TITLE_GAP = 30u,
+	MENU_HELP_GAP = 30u,
+	MENU_LINE_HEIGHT = 20u,
+	MENU_LIST_GAP = 10u,
+	MENU_INPUT_LABEL_GAP = 20u,
+	MENU_INPUT_BOX_HEIGHT = 20u,
+	MENU_HIGHLIGHT_WIDTH = 320u
 } menu_t;
 
 typedef struct MenuContext {
-    const rom_t *roms;
-    MenuSelection *out;
-    MenuSelection *sel;
-    const struct MenuKeyMap *menu_keys;
-    const struct MenuKeyMap *input_keys;
-    char *path;
-    size_t *selected;
-    size_t *path_len;
-    int *input_mode;
-    size_t rom_count;
-    size_t menu_keys_len;
-    size_t input_keys_len;
+	const rom_t *roms;
+	MenuSelection *out;
+	MenuSelection *sel;
+	const struct MenuKeyMap *menu_keys;
+	const struct MenuKeyMap *input_keys;
+	char *path;
+	size_t *selected;
+	size_t *path_len;
+	int *input_mode;
+	size_t rom_count;
+	size_t menu_keys_len;
+	size_t input_keys_len;
 } menu_ctx_t;
 
 typedef int (*MenuKeyHandler)(menu_ctx_t *ctx);
@@ -90,8 +90,8 @@ static int
 menu_key_up(menu_ctx_t *ctx)
 {
 	if (ctx->rom_count > 0) {
-		*ctx->selected = (*ctx->selected == 0) ? (ctx->rom_count - 1)
-		                                       : (*ctx->selected - 1);
+		*ctx->selected = (*ctx->selected == 0) ? (ctx->rom_count - 1) :
+		                                         (*ctx->selected - 1);
 	}
 	return 0;
 }
@@ -191,7 +191,8 @@ menu_event_textinput(menu_ctx_t *ctx, const SDL_Event *ev)
 	if (*ctx->input_mode) {
 		size_t add_len = strlen(ev->text.text);
 		if (*ctx->path_len + add_len < ROM_PATH_MAX - 1) {
-			memcpy(&ctx->path[*ctx->path_len], ev->text.text, add_len);
+			memcpy(&ctx->path[*ctx->path_len], ev->text.text,
+			       add_len);
 			*ctx->path_len += add_len;
 			ctx->path[*ctx->path_len] = '\0';
 		}
@@ -212,8 +213,8 @@ menu_event_keydown(menu_ctx_t *ctx, const SDL_Event *ev)
 }
 
 static int
-menu_dispatch_event(const MenuEventMap *map, size_t map_len, const SDL_Event *ev,
-                    menu_ctx_t *ctx)
+menu_dispatch_event(const MenuEventMap *map, size_t map_len,
+                    const SDL_Event *ev, menu_ctx_t *ctx)
 {
 	for (size_t i = 0; i < map_len; i++) {
 		if (map[i].type == ev->type) {
@@ -297,8 +298,9 @@ menu_render(SDL_Renderer *ren, const rom_t *roms, size_t rom_count,
 
 	platform_render_text(ren, 20, y, "CHIP-8 ROM SELECT");
 	y += MENU_TITLE_GAP;
-	platform_render_text(ren, 20, y,
-	                     "Up/Down: Select  Enter: Load  L: Load from path  Esc: Quit");
+	platform_render_text(
+		ren, 20, y,
+		"Up/Down: Select  Enter: Load  L: Load from path  Esc: Quit");
 	y += MENU_HELP_GAP;
 
 	if (rom_count == 0) {
@@ -312,8 +314,9 @@ menu_render(SDL_Renderer *ren, const rom_t *roms, size_t rom_count,
 
 			if (!input_mode && i == selected) {
 				SDL_Rect hi = { 16, y - 2, MENU_HIGHLIGHT_WIDTH,
-					       MENU_LINE_HEIGHT - 2 };
-				SDL_SetRenderDrawColor(ren, fg.r, fg.g, fg.b, 40);
+					        MENU_LINE_HEIGHT - 2 };
+				SDL_SetRenderDrawColor(ren, fg.r, fg.g, fg.b,
+				                       40);
 				SDL_RenderFillRect(ren, &hi);
 				line_color = CRT_DARK_BG;
 			}
@@ -335,7 +338,8 @@ menu_render(SDL_Renderer *ren, const rom_t *roms, size_t rom_count,
 		SDL_RenderFillRect(ren, &box);
 	}
 
-	platform_render_text_col(ren, 24, y, path && path[0] ? path : "(press L)",
+	platform_render_text_col(ren, 24, y,
+	                         path && path[0] ? path : "(press L)",
 	                         input_mode ? CRT_DARK_BG : fg);
 
 	SDL_RenderPresent(ren);
@@ -360,27 +364,25 @@ menu_select_rom(const rom_t *roms, size_t rom_count, MenuSelection *out)
 	size_t path_len = 0;
 	int input_mode = 0;
 
-	menu_ctx_t ctx = {
-		.roms = roms,
-		.rom_count = rom_count,
-		.out = out,
-		.sel = &sel,
-		.selected = &selected,
-		.input_mode = &input_mode,
-		.path = path,
-		.path_len = &path_len,
-		.menu_keys = menu_keys,
-		.menu_keys_len = MENU_ARRAY_LEN(menu_keys),
-		.input_keys = input_keys,
-		.input_keys_len = MENU_ARRAY_LEN(input_keys)
-	};
+	menu_ctx_t ctx = { .roms = roms,
+		           .rom_count = rom_count,
+		           .out = out,
+		           .sel = &sel,
+		           .selected = &selected,
+		           .input_mode = &input_mode,
+		           .path = path,
+		           .path_len = &path_len,
+		           .menu_keys = menu_keys,
+		           .menu_keys_len = MENU_ARRAY_LEN(menu_keys),
+		           .input_keys = input_keys,
+		           .input_keys_len = MENU_ARRAY_LEN(input_keys) };
 
 	for (;;) {
 		SDL_Event ev;
 		while (SDL_PollEvent(&ev)) {
 			if (menu_dispatch_event(menu_events,
-			                        MENU_ARRAY_LEN(menu_events), &ev,
-			                        &ctx)) {
+			                        MENU_ARRAY_LEN(menu_events),
+			                        &ev, &ctx)) {
 				return 0;
 			}
 		}
@@ -405,7 +407,8 @@ menu_select_rom(const rom_t *roms, size_t rom_count, MenuSelection *out)
 			top = 0;
 		}
 
-		menu_render(ren, roms, rom_count, selected, top, path, input_mode);
+		menu_render(ren, roms, rom_count, selected, top, path,
+		            input_mode);
 		SDL_Delay(16);
 	}
 }
@@ -413,8 +416,7 @@ menu_select_rom(const rom_t *roms, size_t rom_count, MenuSelection *out)
 #else
 
 int
-menu_select_rom(const rom_t *roms, size_t rom_count,
-                MenuSelection *out)
+menu_select_rom(const rom_t *roms, size_t rom_count, MenuSelection *out)
 {
 	(void)roms;
 	(void)rom_count;

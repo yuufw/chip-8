@@ -50,7 +50,8 @@ main(int argc, char **argv)
 			const rom_t *rom = &roms[selection.index];
 			if (memory_load_buffer(&c8.mem, rom->start,
 			                       embedded_rom_size(rom)) != 0) {
-				fprintf(stderr, "Failed to load embedded ROM: %s\n",
+				fprintf(stderr,
+				        "Failed to load embedded ROM: %s\n",
 				        rom->name);
 				continue;
 			}
@@ -75,7 +76,8 @@ main(int argc, char **argv)
 			if (c8.input.waiting_for_key >= 0) {
 				for (uint8_t k = 0; k < NUM_KEYS; k++) {
 					if (c8.input.keys[k]) {
-						c8.V[c8.input.waiting_for_key] = k;
+						c8.V[c8.input.waiting_for_key] =
+							k;
 						c8.input.waiting_for_key = -1;
 						break;
 					}
