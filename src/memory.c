@@ -23,7 +23,7 @@ memory_read(const Memory *m, uint16_t addr)
 	return m->memory[addr];
 }
 
-void
+int
 memory_write(Memory *m, uint16_t addr, uint8_t val)
 {
 	if (addr >= MEM_SIZE) {
@@ -33,6 +33,7 @@ memory_write(Memory *m, uint16_t addr, uint8_t val)
 		return -EINVAL;
 	}
 	m->memory[addr] = val;
+	return 0;
 }
 
 int
