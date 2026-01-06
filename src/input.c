@@ -1,5 +1,6 @@
 #include "input.h"
 
+#include <errno.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <string.h>
@@ -41,8 +42,14 @@ input_set_key(Input *in, uint8_t key, uint8_t pressed)
 	}
 }
 
-void
+int
 input_wait_for_key(Input *in, uint8_t register_idx)
 {
-	in->waiting_for_key = register_idx;
+	if (register_idx > 0x0Fu) {
+		return -ERANGE;
+	}
+
+	in->waiting_for_key = (int8_t)register_idx;
+
+	return 0;
 }

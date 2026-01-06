@@ -14,6 +14,6 @@ typedef struct __attribute__((packed)) {
 
 void input_init(Input *in);
 void input_set_key(Input *in, uint8_t key, uint8_t pressed);
-void input_wait_for_key(Input *in, uint8_t register_idx);
+int input_wait_for_key(Input *in, uint8_t register_idx);
 
 #endif    // INPUT_H
