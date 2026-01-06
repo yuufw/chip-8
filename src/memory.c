@@ -87,3 +87,18 @@ memory_load_rom(Memory *m, const char *path)
 
 	return 0;
 }
+
+int
+memory_load_buffer(Memory *m, const uint8_t *data, size_t size)
+{
+	if (!data || size < 1) {
+		return -EINVAL;
+	}
+
+	if (START_ADDR + size > MEM_SIZE) {
+		return -ENOMEM;
+	}
+
+	memcpy(&m->memory[START_ADDR], data, size);
+	return 0;
+}

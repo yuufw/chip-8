@@ -27,6 +27,7 @@ chip8_init(Chip8 *c8)
 	memory_init(&c8->mem);
 	display_init(&c8->disp);
 	input_init(&c8->input);
+	timers_init(&c8->timers);
 
 	c8->I = 0;
 	c8->pc = START_ADDR;
