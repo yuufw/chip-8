@@ -31,6 +31,7 @@ input_init(Input *in)
 	prefetch_memory(in, sizeof(*in));
 	memset(in->keys, 0, sizeof in->keys);
 	in->waiting_for_key = -1;
+	in->menu_signal = 0;
 	in->exit_signal = 0;
 }
 

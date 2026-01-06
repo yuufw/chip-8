@@ -20,14 +20,12 @@ display_draw_sprite(Display *disp, Memory *m, uint16_t I, uint8_t x, uint8_t y,
 
 		for (uint8_t col = 0; col < 8u; col++) {
 			if (sprite_byte & (uint8_t)(0x80u >> col)) {
-				uint8_t px =
-					(uint8_t)((((unsigned int)x +
-						(unsigned int)col) %
-						(unsigned int)DISPLAY_WIDTH));
-				uint8_t py =
-					(uint8_t)((((unsigned int)y +
-						(unsigned int)row) %
-						(unsigned int)DISPLAY_HEIGHT));
+				uint8_t px = (uint8_t)((
+					((unsigned int)x + (unsigned int)col) %
+					(unsigned int)DISPLAY_WIDTH));
+				uint8_t py = (uint8_t)((
+					((unsigned int)y + (unsigned int)row) %
+					(unsigned int)DISPLAY_HEIGHT));
 				uint32_t index =
 					(uint32_t)py * DISPLAY_WIDTH + px;
 

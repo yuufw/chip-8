@@ -5,15 +5,21 @@
 # ---------- Toolchain ----------
 CC      ?= gcc
 PKGCONF ?= pkg-config
+LD      ?= ld
+OBJCOPY ?= objcopy
 
 # ---------- Project paths ----------
 SRCDIR  ?= src
 HDRDIR  ?= inc
 BINDIR  ?= bin
 OBJROOT ?= obj
+ROMDIR  ?= roms
 
 # ---------- Sources ----------
 SRCS := $(wildcard $(SRCDIR)/*.c)
+ROM_FILES := $(wildcard $(ROMDIR)/*)
+ROM_OBJS  := $(patsubst $(ROMDIR)/%,$(OBJROOT)/roms/%.o,$(ROM_FILES))
+ROM_MANIFEST := $(OBJROOT)/roms/roms_manifest.h
 
 # ---------- Verbosity ----------
 V ?= 0
@@ -33,6 +39,7 @@ ld-options = $(foreach f,$(1),$(call ld-option,$(f)))
 
 # ---------- Base flags ----------
 CPPFLAGS ?= -I./$(HDRDIR)
+CPPFLAGS += -I$(OBJROOT)/roms
 CFLAGS   ?= -std=c11
 LDFLAGS  ?=
 LDLIBS   ?=
@@ -236,7 +243,7 @@ RELSZ_OBJS    := $(patsubst $(SRCDIR)/%.c,$(RELSZ_OBJDIR)/%.o,$(SRCS))
 
 # ---------- Rule generator ----------
 define GEN_CFG_RULES
-$($(1)_BIN): $($(1)_OBJS)
+$($(1)_BIN): $($(1)_OBJS) $(ROM_OBJS)
 	$(Q)mkdir -p $$(@D)
 	$(Q)echo "Linking $$@..."
 	$(Q)$(CC) $(LDFLAGS) $($(1)_LD) $$^ -o $$@ $(LDLIBS) $($(1)_LIBS)
@@ -254,6 +261,61 @@ $(eval $(call GEN_CFG_RULES,SDL))
 $(eval $(call GEN_CFG_RULES,DEBUG))
 $(eval $(call GEN_CFG_RULES,RELEASE))
 $(eval $(call GEN_CFG_RULES,RELSZ))
+
+# ---------- Embedded ROMs ----------
+$(ROM_MANIFEST): $(ROM_FILES) Makefile
+	$(Q)mkdir -p $(@D)
+	$(Q){ \
+	  echo "/* Auto-generated from $(ROMDIR). Do not edit. */"; \
+	  echo "#ifndef ROMS_MANIFEST_H"; \
+	  echo "#define ROMS_MANIFEST_H"; \
+	  echo "#include <stddef.h>"; \
+	  echo "#include <stdint.h>"; \
+	  echo ""; \
+	  set -- $(ROM_FILES); \
+	  count=$$#; \
+	  if [ "$$count" -eq 0 ]; then \
+	    echo "#define ROMS_EMBEDDED_LIST"; \
+	    echo "#define ROMS_EMBEDDED_COUNT 0"; \
+	  else \
+	    for f in $(ROM_FILES); do \
+	      name=$$(basename "$$f"); \
+	      sym=$$(printf "%s" "$$name" | sed 's/[^A-Za-z0-9_]/_/g'); \
+	      echo "extern const uint8_t _binary_$(ROMDIR)_$${sym}_start[];"; \
+	      echo "extern const uint8_t _binary_$(ROMDIR)_$${sym}_end[];"; \
+	    done; \
+	    echo ""; \
+	    echo "#define ROMS_EMBEDDED_LIST \\"; \
+	    i=0; \
+	    for f in $(ROM_FILES); do \
+	      name=$$(basename "$$f"); \
+	      sym=$$(printf "%s" "$$name" | sed 's/[^A-Za-z0-9_]/_/g'); \
+	      i=$$((i+1)); \
+	      if [ "$$i" -lt "$$count" ]; then \
+	        echo "  { \"$$name\", \".roms.$$name\", _binary_$(ROMDIR)_$${sym}_start, _binary_$(ROMDIR)_$${sym}_end }, \\"; \
+	      else \
+	        echo "  { \"$$name\", \".roms.$$name\", _binary_$(ROMDIR)_$${sym}_start, _binary_$(ROMDIR)_$${sym}_end }"; \
+	      fi; \
+	    done; \
+	    echo ""; \
+	    echo "#define ROMS_EMBEDDED_COUNT $$count"; \
+	  fi; \
+	  echo "#endif"; \
+	} > $@
+
+$(OBJROOT)/roms/%.o: $(ROMDIR)/%
+	$(Q)mkdir -p $(@D)
+	$(Q)$(LD) -r -b binary $< -o $@
+	$(Q)$(OBJCOPY) --rename-section .data=.roms.$*,alloc,load,readonly,data,contents \
+	  --add-section .note.GNU-stack=/dev/null \
+	  --set-section-flags .note.GNU-stack=contents,readonly \
+	  $@
+
+$(HEADLESS_OBJDIR)/roms_embedded.o: $(ROM_MANIFEST)
+$(SDL_OBJDIR)/roms_embedded.o: $(ROM_MANIFEST)
+$(DEBUG_OBJDIR)/roms_embedded.o: $(ROM_MANIFEST)
+$(RELEASE_OBJDIR)/roms_embedded.o: $(ROM_MANIFEST)
+$(RELSZ_OBJDIR)/roms_embedded.o: $(ROM_MANIFEST)
 
 # ---------- Targets ----------
 all: sdl

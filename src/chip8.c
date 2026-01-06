@@ -9,7 +9,8 @@ static inline uint16_t
 chip8_fetch(const Chip8 *c8)
 {
 	const uint8_t hi = (uint8_t)memory_read(&c8->mem, c8->pc);
-	const uint8_t lo = (uint8_t)memory_read(&c8->mem, (uint16_t)(c8->pc + 1u));
+	const uint8_t lo =
+		(uint8_t)memory_read(&c8->mem, (uint16_t)(c8->pc + 1u));
 	return (uint16_t)((hi << 8) | lo);
 }
 
@@ -27,6 +28,7 @@ chip8_init(Chip8 *c8)
 	memory_init(&c8->mem);
 	display_init(&c8->disp);
 	input_init(&c8->input);
+	timers_init(&c8->timers);
 
 	c8->I = 0;
 	c8->pc = START_ADDR;

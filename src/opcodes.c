@@ -100,10 +100,8 @@ static Chip8Op tableF[256] = {
 static inline void
 op_invalid(Chip8 *c8, uint16_t op)
 {
-	fprintf(stderr,
-		"Invalid op %04X at PC=%04X\n",
-		(unsigned int)op,
-		(unsigned int)((uint16_t)(c8->pc - 2u)));
+	fprintf(stderr, "Invalid op %04X at PC=%04X\n", (unsigned int)op,
+	        (unsigned int)((uint16_t)(c8->pc - 2u)));
 }
 
 /* ============================================================
@@ -410,7 +408,7 @@ static inline void
 op_fx29(Chip8 *c8, uint16_t o)
 {
 	c8->I = (uint16_t)(FONTSET_ADDR +
-                   ((uint16_t)c8->V[(o >> 8) & 0x0Fu] * (uint16_t)5u));
+	                   ((uint16_t)c8->V[(o >> 8) & 0x0Fu] * (uint16_t)5u));
 }
 
 // LD B, Vx
@@ -422,9 +420,9 @@ op_fx33(Chip8 *c8, uint16_t o)
 
 	memory_write(&c8->mem, c8->I, (uint8_t)(v / 100u));
 	memory_write(&c8->mem, (uint16_t)(c8->I + (uint16_t)1u),
-	                (uint8_t)((v / 10u) % 10u));
+	             (uint8_t)((v / 10u) % 10u));
 	memory_write(&c8->mem, (uint16_t)(c8->I + (uint16_t)2u),
-	                (uint8_t)(v % 10u));
+	             (uint8_t)(v % 10u));
 }
 
 // LD [I], Vx
@@ -434,8 +432,7 @@ op_fx55(Chip8 *c8, uint16_t o)
 	const uint8_t x = (uint8_t)((o >> 8) & 0x0Fu);
 
 	for (uint8_t i = 0; i <= x; i++) {
-		(void)memory_write(&c8->mem,
-		                   (uint16_t)(c8->I + (uint16_t)i),
+		(void)memory_write(&c8->mem, (uint16_t)(c8->I + (uint16_t)i),
 		                   c8->V[i]);
 	}
 }
@@ -447,8 +444,8 @@ op_fx65(Chip8 *c8, uint16_t o)
 	const uint8_t x = (uint8_t)((o >> 8) & 0x0Fu);
 
 	for (uint8_t i = 0; i <= x; i++) {
-		c8->V[i] = (uint8_t)memory_read(&c8->mem,
-		                                (uint16_t)(c8->I + (uint16_t)i));
+		c8->V[i] = (uint8_t)memory_read(
+			&c8->mem, (uint16_t)(c8->I + (uint16_t)i));
 	}
 }
 

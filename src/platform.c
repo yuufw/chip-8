@@ -89,6 +89,12 @@ platform_handle_input(Input *in)
 #endif
 }
 
+SDL_Renderer *
+platform_get_renderer(void)
+{
+	return ren;
+}
+
 void
 platform_update(const Chip8 *c8)
 {
@@ -153,6 +159,36 @@ platform_render_text(SDL_Renderer *renderer, int x, int y, const char *text)
 	SDL_Color fg = ORANGE_VINTAGE_CRT;
 
 	SDL_Surface *surf = TTF_RenderText_Blended(font, text, fg);
+	if (!surf) {
+		return -ENOMEM;
+	}
+
+	SDL_Texture *tex = SDL_CreateTextureFromSurface(renderer, surf);
+	SDL_FreeSurface(surf);
+	if (!tex) {
+		return -ENOMEM;
+	}
+
+	SDL_SetTextureBlendMode(tex, SDL_BLENDMODE_BLEND);
+
+	SDL_Rect dst = { x, y, 0, 0 };
+	SDL_QueryTexture(tex, NULL, NULL, &dst.w, &dst.h);
+	SDL_RenderCopy(renderer, tex, NULL, &dst);
+	SDL_DestroyTexture(tex);
+#endif
+	return 0;
+}
+
+int
+platform_render_text_col(SDL_Renderer *renderer, int x, int y, const char *text,
+                         SDL_Color color)
+{
+#ifdef USE_SDL
+	if (!renderer || !text) {
+		return -EINVAL;
+	}
+
+	SDL_Surface *surf = TTF_RenderText_Blended(font, text, color);
 	if (!surf) {
 		return -ENOMEM;
 	}
