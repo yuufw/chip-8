@@ -108,6 +108,8 @@ platform_handle_input(Input *in)
 			case SDLK_ESCAPE:
 				in->exit_signal = 1;
 				break;
+			default:
+				break;
 			}
 
 			if (key >= 0) {
