@@ -73,8 +73,6 @@ ifeq ($(shell uname),Darwin)
   endif
 endif
 
-
-
 # ---------- Common flags (embedded in ALL targets) ----------
 WERROR ?= 1
 
