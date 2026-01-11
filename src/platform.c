@@ -33,26 +33,26 @@ platform_init_font(void)
 }
 
 typedef struct {
-    SDL_Keycode sdl;
-    uint8_t chip8;
+	SDL_Keycode sdl;
+	uint8_t chip8;
 } KeyMap;
 
 static const KeyMap keymap[] = {
-    { SDLK_1, 0x1 }, { SDLK_2, 0x2 }, { SDLK_3, 0x3 }, { SDLK_4, 0xC },
-    { SDLK_q, 0x4 }, { SDLK_w, 0x5 }, { SDLK_e, 0x6 }, { SDLK_r, 0xD },
-    { SDLK_a, 0x7 }, { SDLK_s, 0x8 }, { SDLK_d, 0x9 }, { SDLK_f, 0xE },
-    { SDLK_z, 0xA }, { SDLK_x, 0x0 }, { SDLK_c, 0xB }, { SDLK_v, 0xF },
+	{ SDLK_1, 0x1 }, { SDLK_2, 0x2 }, { SDLK_3, 0x3 }, { SDLK_4, 0xC },
+	{ SDLK_q, 0x4 }, { SDLK_w, 0x5 }, { SDLK_e, 0x6 }, { SDLK_r, 0xD },
+	{ SDLK_a, 0x7 }, { SDLK_s, 0x8 }, { SDLK_d, 0x9 }, { SDLK_f, 0xE },
+	{ SDLK_z, 0xA }, { SDLK_x, 0x0 }, { SDLK_c, 0xB }, { SDLK_v, 0xF },
 };
 
 static int
 map_key(SDL_Keycode sym)
 {
-    for (size_t i = 0; i < sizeof(keymap) / sizeof(keymap[0]); i++) {
-        if (keymap[i].sdl == sym) {
-            return keymap[i].chip8;
-        }
-    }
-    return -1;
+	for (size_t i = 0; i < sizeof(keymap) / sizeof(keymap[0]); i++) {
+		if (keymap[i].sdl == sym) {
+			return keymap[i].chip8;
+		}
+	}
+	return -1;
 }
 
 void
@@ -134,17 +134,13 @@ platform_create_window(const char *title, int x, int y, int w, int h,
 	if (!title || !out_win || !out_ren) {
 		return -EINVAL;
 	}
-
-	*out_win = SDL_CreateWindow(title, x, y, w, h, SDL_WINDOW_SHOWN);
-	if (!*out_win) {
+	SDL_CreateWindowAndRenderer(w, h, SDL_WINDOW_SHOWN, out_win, out_ren);
+	if (!*out_win || !*out_ren) {
 		return -ENOMEM;
 	}
-	*out_ren = SDL_CreateRenderer(*out_win, -1, SDL_RENDERER_ACCELERATED);
-	if (!*out_ren) {
-		return -ENOMEM;
-	}
+	SDL_SetWindowPosition(*out_win, x, y);
+	SDL_SetWindowTitle(*out_win, title);
 #endif
-
 	return 0;
 }
 
